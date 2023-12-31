@@ -1,4 +1,7 @@
 scalaVersion := "3.3.1"
+
+enablePlugins(ScalaUnidocPlugin)
+
 libraryDependencies ++= Seq(
   "io.github.iltotore" %% "iron" % "2.3.0",
   "org.xerial" % "sqlite-jdbc" % "3.23.1",
@@ -17,3 +20,7 @@ scalacOptions ++= Seq(
 
 resolvers +=
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+
+// Usinng unidoc: https://github.com/delta-io/delta/blob/master/build.sbt
+
+releaseTagName := s"version-${if (releaseUseGlobalVersion.value) (version in ThisBuild).value else version.value}"

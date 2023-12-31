@@ -8,7 +8,7 @@ import cats.effect.unsafe.implicits.global
 
 import scala.util.Properties
 
-object TryDoobie extends App {
+private object TryDoobie extends App {
   private val xa = Transactor.fromDriverManager[IO]("org.sqlite.JDBC", "jdbc:sqlite:sample.db","","",None)
 
   private val y = xa.yolo

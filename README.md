@@ -10,3 +10,6 @@ Site generated at target/scala-3.3.1/unidoc (only public resources)
 
 ### GitUtils
 * Generate release-notes for each module and autotagging
+> git tag -a all -m "all modules"                            
+  
+> git push origin all  

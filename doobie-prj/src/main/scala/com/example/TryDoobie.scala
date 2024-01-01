@@ -1,3 +1,5 @@
+package com.example
+
 import cats.*
 import cats.effect.*
 import cats.effect.unsafe.implicits.global
@@ -5,19 +7,11 @@ import cats.implicits.*
 import doobie.*
 import doobie.implicits.*
 import doobie.util.ExecutionContexts
-import doobie.util.transactor.Transactor.Aux
 
 import scala.util.Properties
 
-import io.github.iltotore.iron.*
-import io.github.iltotore.iron.constraint.all.*
-import io.github.iltotore.iron.doobie.given
-
-opaque type Age = Int :| Positive
-object Age extends RefinedTypeOps[Int, Positive, Age]
-
-object TryDoobieWithIron extends App {
-  private val xa: Aux[IO, Unit] = Transactor.fromDriverManager[IO]("org.sqlite.JDBC", "jdbc:sqlite:sample.db","","",None)
+private object TryDoobie extends App {
+  private val xa = Transactor.fromDriverManager[IO]("org.sqlite.JDBC", "jdbc:sqlite:sample.db","","",None)
 
   private val y = xa.yolo
   import y.*
@@ -38,15 +32,13 @@ object TryDoobieWithIron extends App {
   private val res = (drop, create).mapN(_ + _).transact(xa).unsafeRunSync()
   println(res)
 
-  private def insert1(name: String, age: Option[Age]): Update0 =
+  private def insert1(name: String, age: Option[Int]): Update0 =
     sql"insert into person (name, age) values ($name, $age)".update
 
-  insert1("Alice", Some(Age(12))).run.transact(xa).unsafeRunSync()
+  insert1("Alice", Some(12)).run.transact(xa).unsafeRunSync()
   insert1("Bob", None).quick.unsafeRunSync() // switch to YOLO mode
-  sql"insert into person (name, age) values ('Pepe', 99)".update.quick.unsafeRunSync()
-  // sql"insert into person (name, age) values ('V', -1)".update.quick.unsafeRunSync() // ERROR: because: Should be strictly positive
 
-  case class Person(id: Long, name: String, age: Option[Age])
+  case class Person(id: Long, name: String, age: Option[Int])
 
   val l = sql"select rowid, name, age from person"
     .query[Person]
